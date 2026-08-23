@@ -1,0 +1,21 @@
+# Build
+bin/
+obj/
+
+# Rider
+.idea/
+
+# Logs
+*.log
+logs/
+
+# User Secrets
+secrets.json
+
+# Environment variables
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.dbea/
