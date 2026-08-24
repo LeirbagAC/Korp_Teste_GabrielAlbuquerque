@@ -1,6 +1,7 @@
 using InventoryService.Data;
 using InventoryService.DTOs.Request;
 using InventoryService.DTOs.Response;
+using InventoryService.Exceptions;
 using InventoryService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +26,7 @@ public class ProductService(InventoryDbContext context) : IProductService
     {
 		var product = await context.Products.FindAsync(id);
 		
-		if(product is null) throw new KeyNotFoundException($"Produto com ID {id} não encontrado.");
+		if(product is null) throw new NotFoundException($"Produto com ID {id} não encontrado.");
 
 		return new ProductResponseDto(
 			product.Id,
@@ -66,9 +67,9 @@ public class ProductService(InventoryDbContext context) : IProductService
     	{
         	var product = products.FirstOrDefault(p => p.Id == request.ProductId);
 
-        	if (product is null) throw new KeyNotFoundException($"Produto com ID {request.ProductId} não encontrado.");
+        	if (product is null) throw new NotFoundException($"Produto com ID {request.ProductId} não encontrado.");
 
-		    if (product.Quantity < request.Quantity) throw new InvalidOperationException($"Estoque insuficiente para o produto {product.Name}. Estoque atual: {product.Quantity}, quantidade solicitada: {request.Quantity}.");
+		    if (product.Quantity < request.Quantity) throw new InsufficientStockException(product.Name, product.Quantity, request.Quantity);
 
         	product.Quantity -= request.Quantity;
     	}
