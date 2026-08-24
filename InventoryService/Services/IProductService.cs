@@ -1,12 +1,12 @@
-using InventoryService.Models;
-using InventoryService.DTOs.Requests;
+using InventoryService.DTOs.Request;
+using InventoryService.DTOs.Response;
 
 namespace InventoryService.Services;
 
 public interface IProductService
 {
-    Task<IEnumerable<Product>> GetAllProductsAsync();
-    Task<Product?> GetProductByIdAsync(int id);
-    Task<Product> CreateAsync(Product product);
-    Task DecreaseStockAsync(List<DecreaseStockRequest> requests);
+    Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync();
+    Task<ProductResponseDto> GetProductByIdAsync(int id);
+    Task<ProductResponseDto> CreateAsync(ProductRequestDto product);
+    Task DecreaseStockAsync(List<DecreaseStockRequestDto> requests);
 }

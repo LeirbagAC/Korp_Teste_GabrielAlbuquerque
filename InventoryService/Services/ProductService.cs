@@ -1,38 +1,60 @@
 using InventoryService.Data;
+using InventoryService.DTOs.Request;
+using InventoryService.DTOs.Response;
 using InventoryService.Models;
 using Microsoft.EntityFrameworkCore;
-using InventoryService.DTOs.Requests;
-
 
 namespace InventoryService.Services;
 
 public class ProductService(InventoryDbContext context) : IProductService
 {
-    public async Task<IEnumerable<Product>> GetAllProductsAsync()
+    public async Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync()
     {
         return await context.Products
 		.AsNoTracking()
+		.Select(product => new ProductResponseDto(
+			product.Id,
+			product.Code,
+			product.Name,
+			product.Quantity
+		))
 		.ToListAsync();
     }
 
-    public async Task<Product?> GetProductByIdAsync(int id)
+    public async Task<ProductResponseDto> GetProductByIdAsync(int id)
     {
 		var product = await context.Products.FindAsync(id);
 		
 		if(product is null) throw new KeyNotFoundException($"Produto com ID {id} não encontrado.");
 
-        return product;
+		return new ProductResponseDto(
+			product.Id,
+			product.Code,
+			product.Name,
+			product.Quantity
+		);    
     }
-
-	
-    public async Task<Product> CreateAsync(Product product)
+    
+    public async Task<ProductResponseDto> CreateAsync(ProductRequestDto request)
     {
+	    var product = new Product()
+	    {
+		    Name = request.ProductName,
+		    Quantity = request.Quantity
+	    };
+	    
         context.Products.Add(product);
         await context.SaveChangesAsync();
-        return product;
+        
+        return new ProductResponseDto(
+	        product.Id,
+	        product.Code,
+	        product.Name,
+	        product.Quantity
+        );
     }
 
-	public async Task DecreaseStockAsync(List<DecreaseStockRequest> requests)
+	public async Task DecreaseStockAsync(List<DecreaseStockRequestDto> requests)
 	{	
     	var productIds = requests.Select(r => r.ProductId).ToList();
 

@@ -1,7 +1,7 @@
-using InventoryService.Models;
+using InventoryService.DTOs.Request;
+using InventoryService.DTOs.Response;
 using InventoryService.Services;
 using Microsoft.AspNetCore.Mvc;
-using InventoryService.DTOs.Requests;
 
 namespace InventoryService.Controllers;
 
@@ -10,28 +10,32 @@ namespace InventoryService.Controllers;
 public class ProductsController(IProductService productService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+    public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducts()
     {
-        var products = await productService.GetAllProductsAsync();
-        return Ok(products); 
+        var productsDto = await productService.GetAllProductsAsync();
+        return Ok(productsDto); 
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProductById(int id)
+    public async Task<ActionResult<ProductResponseDto>> GetProductById(int id)
     {
-        var product = await productService.GetProductByIdAsync(id);
-        return Ok(product);
+        var productDto = await productService.GetProductByIdAsync(id);
+        return Ok(productDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Product>> CreateProduct(Product product)
+    public async Task<ActionResult<ProductResponseDto>> CreateProduct(ProductRequestDto request)
     {
-        var createdProduct = await productService.CreateAsync(product);
-        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+        var createdProduct = await productService.CreateAsync(request);
+        return CreatedAtAction(
+            nameof(GetProductById),
+            new { id = createdProduct.Id },
+            createdProduct
+        );
     }
 
 	[HttpPost("decrease-stock")]
-    public async Task<IActionResult> DecreaseStock([FromBody]List<DecreaseStockRequest> requests)
+    public async Task<IActionResult> DecreaseStock([FromBody]List<DecreaseStockRequestDto> requests)
     {
         await productService.DecreaseStockAsync(requests);
         return NoContent();

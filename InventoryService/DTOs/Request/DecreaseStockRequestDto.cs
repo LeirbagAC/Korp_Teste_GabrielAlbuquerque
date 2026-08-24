@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
     
-namespace InventoryService.DTOs.Requests;
+namespace InventoryService.DTOs.Request;
 
-public record DecreaseStockRequest(
+public record DecreaseStockRequestDto(
     [Required(ErrorMessage = "O ID do produto é obrigatório.")]
     int ProductId, 
     
