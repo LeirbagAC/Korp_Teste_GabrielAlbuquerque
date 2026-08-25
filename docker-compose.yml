@@ -1,7 +1,7 @@
 services:
-  mysql:
+  mysql-inventory:
     image: mysql:latest
-    container_name: mysql_korp_teste
+    container_name: mysql_inventory
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: inventory_db
@@ -10,7 +10,21 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_inventory_data:/var/lib/mysql
+
+  mysql-billing:
+    image: mysql:latest
+    container_name: mysql_billing
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: invoice_db
+      MYSQL_USER: Gabriel
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306" # Acessível em localhost:3307
+    volumes:
+      - mysql_billing_data:/var/lib/mysql
 
 volumes:
-  mysql_data:
+  mysql_inventory_data:
+  mysql_billing_data:
