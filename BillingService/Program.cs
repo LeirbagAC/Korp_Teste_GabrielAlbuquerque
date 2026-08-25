@@ -1,4 +1,6 @@
+using BillingService.Clients;
 using BillingService.Data;
+using BillingService.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+var inventoryUrl = builder.Configuration["Services:InventoryUrl"] 
+                   ?? builder.Configuration["INVENTORY_SERVICE_URL"] 
+                   ?? "http://localhost:5225";
+builder.Services.AddHttpClient<IInventoryClient, InventoryClient>(client =>
+{
+    client.BaseAddress = new Uri(inventoryUrl);
+});
 
 var app = builder.Build();
 
