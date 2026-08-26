@@ -14,7 +14,6 @@ public class ProductService(InventoryDbContext context) : IProductService
         return await context.Products
 		.AsNoTracking()
 		.Select(product => new ProductResponseDto(
-			product.Id,
 			product.Code,
 			product.Name,
 			product.Quantity
@@ -22,59 +21,67 @@ public class ProductService(InventoryDbContext context) : IProductService
 		.ToListAsync();
     }
 
-    public async Task<ProductResponseDto> GetProductByIdAsync(int id)
+    public async Task<ProductResponseDto> GetProductByCodeAsync(string productCode)
     {
-		var product = await context.Products.FindAsync(id);
-		
-		if(product is null) throw new NotFoundException($"Produto com ID {id} não encontrado.");
+	    var product = await context.Products.FirstOrDefaultAsync(p => p.Code == productCode);
+        
+	    if (product is null) 
+		    throw new NotFoundException($"Produto com código {productCode} não encontrado.");
 
-		return new ProductResponseDto(
-			product.Id,
-			product.Code,
-			product.Name,
-			product.Quantity
-		);    
+	    return new ProductResponseDto(
+		    product.Code,
+		    product.Name,
+		    product.Quantity
+	    );    
     }
     
     public async Task<ProductResponseDto> CreateAsync(ProductRequestDto request)
     {
-	    var product = new Product()
-	    {
-		    Name = request.ProductName,
-		    Quantity = request.Quantity
-	    };
-	    
-        context.Products.Add(product);
-        await context.SaveChangesAsync();
+	    var product = new Product(request.ProductName, request.Quantity);
         
-        return new ProductResponseDto(
-	        product.Id,
-	        product.Code,
-	        product.Name,
-	        product.Quantity
-        );
+	    var transaction = await context.Database.BeginTransactionAsync();
+        
+	    try
+	    {
+		    context.Products.Add(product);
+		    await context.SaveChangesAsync();
+            
+		    product.GenerateCode();
+		    await context.SaveChangesAsync();
+            
+		    await transaction.CommitAsync();
+            
+		    return new ProductResponseDto(
+			    product.Code,
+			    product.Name,
+			    product.Quantity
+		    );
+	    }
+	    catch
+	    {
+		    await transaction.RollbackAsync();
+		    throw;
+	    }
     }
 
-	public async Task DecreaseStockAsync(List<DecreaseStockRequestDto> requests)
-	{	
-    	var productIds = requests.Select(r => r.ProductId).ToList();
+    public async Task DecreaseStockAsync(List<DecreaseStockRequestDto> requests)
+    {    
+	    var productCodes = requests.Select(r => r.ProductCode).ToList();
 
-    	var products = await context.Products
-        	.Where(p => productIds.Contains(p.Id))
-        	.ToListAsync();
+	    var products = await context.Products
+		    .Where(p => productCodes.Contains(p.Code))
+		    .ToListAsync();
 
-    	foreach (var request in requests)
-    	{
-        	var product = products.FirstOrDefault(p => p.Id == request.ProductId);
+	    foreach (var request in requests)
+	    {
+		    var product = products.FirstOrDefault(p => p.Code == request.ProductCode);
 
-        	if (product is null) throw new NotFoundException($"Produto com ID {request.ProductId} não encontrado.");
+		    if (product is null) 
+			    throw new NotFoundException($"Produto com código {request.ProductCode} não encontrado.");
 
-		    if (product.Quantity < request.Quantity) throw new InsufficientStockException(product.Name, product.Quantity, request.Quantity);
+		    product.DecreaseStock(request.Quantity);
+	    }
 
-        	product.Quantity -= request.Quantity;
-    	}
-
-    	await context.SaveChangesAsync();
-	}
-
+	    await context.SaveChangesAsync();
+    }
 }

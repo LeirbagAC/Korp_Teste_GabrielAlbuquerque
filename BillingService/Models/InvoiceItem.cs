@@ -7,9 +7,7 @@ public class InvoiceItem
     public Guid InvoiceId { get; set; }
     
     public Invoice Invoice { get; set; } = null!;
-
-    public int ProductId { get; set; }
-
+    
     public string ProductCode { get; set; } = string.Empty;
     public string ProductName { get; set; } = string.Empty;
     

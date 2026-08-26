@@ -16,10 +16,10 @@ public class ProductsController(IProductService productService) : ControllerBase
         return Ok(productsDto); 
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProductResponseDto>> GetProductById(int id)
+    [HttpGet("{productCode}")]
+    public async Task<ActionResult<ProductResponseDto>> GetProductByCode(string productCode)
     {
-        var productDto = await productService.GetProductByIdAsync(id);
+        var productDto = await productService.GetProductByCodeAsync(productCode);
         return Ok(productDto);
     }
 
@@ -27,18 +27,18 @@ public class ProductsController(IProductService productService) : ControllerBase
     public async Task<ActionResult<ProductResponseDto>> CreateProduct(ProductRequestDto request)
     {
         var createdProduct = await productService.CreateAsync(request);
+        
         return CreatedAtAction(
-            nameof(GetProductById),
-            new { id = createdProduct.Id },
+            nameof(GetProductByCode),
+            new { productCode = createdProduct.Code }, 
             createdProduct
         );
     }
 
-	[HttpPost("decrease-stock")]
+    [HttpPost("decrease-stock")]
     public async Task<IActionResult> DecreaseStock([FromBody]List<DecreaseStockRequestDto> requests)
     {
         await productService.DecreaseStockAsync(requests);
         return NoContent();
     }
-
 }

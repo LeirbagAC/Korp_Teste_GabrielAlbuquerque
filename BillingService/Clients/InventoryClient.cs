@@ -26,14 +26,14 @@ public class InventoryClient(HttpClient httpClient) : IInventoryClient
         }
     }
     
-    public async Task<ProductResponseDto> GetProductByIdAsync(int id)
+    public async Task<ProductResponseDto> GetProductByCodeAsync(string productCode)
     {
         try
         {
-            var response = await httpClient.GetAsync($"/api/products/{id}");
+            var response = await httpClient.GetAsync($"/api/products/{productCode}");
 
             if (response.StatusCode == HttpStatusCode.NotFound)
-                throw new NotFoundException($"Produto com ID {id} não foi encontrado no catálogo.");
+                throw new NotFoundException($"Produto com ID {productCode} não foi encontrado no catálogo.");
             
             if (!response.IsSuccessStatusCode)
                 throw new DomainException("Serviço de estoque indisponível no momento.");

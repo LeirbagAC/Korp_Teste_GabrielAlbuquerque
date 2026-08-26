@@ -6,6 +6,6 @@ namespace BillingService.Clients;
 public interface IInventoryClient
 {
     Task DecreaseStockAsync(List<DecreaseStockRequestDto> requests);
-    Task<ProductResponseDto> GetProductByIdAsync(int id);
+    Task<ProductResponseDto> GetProductByCodeAsync(string productCode);
 
 }

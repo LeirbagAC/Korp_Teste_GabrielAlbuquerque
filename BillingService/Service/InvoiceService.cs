@@ -28,11 +28,10 @@ public class InvoiceService(BillingDbContext context, IInventoryClient inventory
         //   Refatorar para não fazer um loop diretamente no banco
         foreach (var itemRequest in request.Items)
         {
-            var product = await inventoryClient.GetProductByIdAsync(itemRequest.ProductId);
+            var product = await inventoryClient.GetProductByCodeAsync(itemRequest.ProductCode);
 
             var invoiceItem = new InvoiceItem
             {
-                ProductId = product.Id,
                 ProductCode = product.Code,
                 ProductName = product.ProductName,
                 Quantity = itemRequest.Quantity
@@ -60,7 +59,7 @@ public class InvoiceService(BillingDbContext context, IInventoryClient inventory
             throw new DomainException("Apenas notas com status 'Aberta' podem ser impressas.");
 
         var stockRequests = invoice.Items.Select(item => new DecreaseStockRequestDto(
-            ProductId: item.ProductId,
+            ProductCode: item.ProductCode,
             Quantity: item.Quantity
         )).ToList();
 
