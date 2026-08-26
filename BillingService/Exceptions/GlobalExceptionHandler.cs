@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace InventoryService.Exceptions;
+namespace BillingService.Exceptions;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
@@ -10,7 +10,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         Exception exception,
         CancellationToken cancellationToken)
     {
-        if (exception is not NotFoundException and not DomainException and not InsufficientStockException)
+        if (exception is not NotFoundException and not DomainException)
         {
             logger.LogError(exception, "Erro inesperado ocorrido: {Message}", exception.Message);
         }
@@ -50,11 +50,6 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             NotFoundException => (
                 StatusCodes.Status404NotFound, 
                 "Recurso Não Encontrado", 
-                exception.Message),
-            
-            InsufficientStockException => (
-                StatusCodes.Status409Conflict, 
-                "Estoque Insuficiente", 
                 exception.Message),
                 
             DomainException => (

@@ -1,5 +1,6 @@
 using BillingService.Clients;
 using BillingService.Data;
+using BillingService.Exceptions;
 using BillingService.Mappers;
 using BillingService.Service;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,10 @@ builder.Services.AddHttpClient<IInventoryClient, InventoryClient>(client =>
     client.BaseAddress = new Uri(inventoryUrl);
 });
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,6 +54,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 
