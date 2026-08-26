@@ -2,23 +2,17 @@ using InventoryService.Data;
 using InventoryService.DTOs.Request;
 using InventoryService.DTOs.Response;
 using InventoryService.Exceptions;
+using InventoryService.Mappers;
 using InventoryService.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryService.Services;
 
-public class ProductService(InventoryDbContext context) : IProductService
+public class ProductService(InventoryDbContext context, ProductMapper mapper) : IProductService
 {
     public async Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync()
     {
-        return await context.Products
-		.AsNoTracking()
-		.Select(product => new ProductResponseDto(
-			product.Code,
-			product.Name,
-			product.Quantity
-		))
-		.ToListAsync();
+        return await mapper.ProjectToDto(context.Products.AsNoTracking()).ToListAsync();
     }
 
     public async Task<ProductResponseDto> GetProductByCodeAsync(string productCode)
@@ -28,11 +22,7 @@ public class ProductService(InventoryDbContext context) : IProductService
 	    if (product is null) 
 		    throw new NotFoundException($"Produto com código {productCode} não encontrado.");
 
-	    return new ProductResponseDto(
-		    product.Code,
-		    product.Name,
-		    product.Quantity
-	    );    
+	    return mapper.MapToProductResponseDto(product);    
     }
     
     public async Task<ProductResponseDto> CreateAsync(ProductRequestDto request)
@@ -51,11 +41,7 @@ public class ProductService(InventoryDbContext context) : IProductService
             
 		    await transaction.CommitAsync();
             
-		    return new ProductResponseDto(
-			    product.Code,
-			    product.Name,
-			    product.Quantity
-		    );
+		    return mapper.MapToProductResponseDto(product);    
 	    }
 	    catch
 	    {

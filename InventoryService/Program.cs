@@ -1,5 +1,6 @@
 using InventoryService.Data;
 using InventoryService.Exceptions;
+using InventoryService.Mappers;
 using Microsoft.EntityFrameworkCore;
 using InventoryService.Services;
 
@@ -28,6 +29,8 @@ builder.Services.AddProblemDetails();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<ProductMapper>();
 
 builder.Services.AddAuthorization();
 

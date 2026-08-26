@@ -13,11 +13,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+    <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Mappers\" />
   </ItemGroup>
 
 </Project>
