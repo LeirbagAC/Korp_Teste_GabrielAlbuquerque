@@ -4,12 +4,19 @@ using BillingService.Models;
 using BillingService.DTOs.Request;
 using BillingService.DTOs.Response;
 using BillingService.Exceptions;
+using BillingService.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace BillingService.Service;
 
-public class InvoiceService(BillingDbContext context, IInventoryClient inventoryClient) : IInvoiceService
+public class InvoiceService(BillingDbContext context, IInventoryClient inventoryClient, InvoiceMapper invoiceMapper) : IInvoiceService
 {
+    public async Task<IEnumerable<InvoiceResponseDto>> GetInvoicesAsync()
+    {
+        return await invoiceMapper.ProjectToDto(context.Invoices.AsNoTracking())
+            .ToListAsync();
+    }
+    
     public async Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceRequestDto request)
     {
         var invoice = new Invoice
@@ -27,7 +34,7 @@ public class InvoiceService(BillingDbContext context, IInventoryClient inventory
             {
                 ProductId = product.Id,
                 ProductCode = product.Code,
-                ProductDescription = product.ProductName,
+                ProductName = product.ProductName,
                 Quantity = itemRequest.Quantity
             };
 
@@ -37,18 +44,7 @@ public class InvoiceService(BillingDbContext context, IInventoryClient inventory
         context.Invoices.Add(invoice);
         await context.SaveChangesAsync();
 
-        return new InvoiceResponseDto(
-            invoice.Id,
-            invoice.SequentialNumber,
-            invoice.Items.Select(i => new InvoiceItemResponseDto(
-                i.ProductId,
-                i.ProductCode,
-                i.ProductDescription,
-                i.Quantity
-            )).ToList(),
-            invoice.Status.ToString(),
-            invoice.CreatedAt
-        );
+        return invoiceMapper.MapToDto(invoice);
     }
     
     public async Task PrintInvoiceAsync(int invoiceId)

@@ -1,5 +1,6 @@
 using BillingService.Clients;
 using BillingService.Data;
+using BillingService.Mappers;
 using BillingService.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<InvoiceMapper>();
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 var inventoryUrl = builder.Configuration["Services:InventoryUrl"] 
