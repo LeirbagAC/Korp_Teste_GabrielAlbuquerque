@@ -24,24 +24,25 @@ namespace BillingService.Migrations
 
             modelBuilder.Entity("BillingService.Models.Invoice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("SequentialNumber")
-                        .IsRequired()
+                    b.Property<int>("SequentialNumber")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SequentialNumber"));
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("SequentialNumber");
 
                     b.ToTable("Invoices");
                 });
@@ -54,8 +55,8 @@ namespace BillingService.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("ProductCode")
                         .IsRequired()
@@ -80,11 +81,13 @@ namespace BillingService.Migrations
 
             modelBuilder.Entity("BillingService.Models.InvoiceItem", b =>
                 {
-                    b.HasOne("BillingService.Models.Invoice", null)
+                    b.HasOne("BillingService.Models.Invoice", "Invoice")
                         .WithMany("Items")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("BillingService.Models.Invoice", b =>

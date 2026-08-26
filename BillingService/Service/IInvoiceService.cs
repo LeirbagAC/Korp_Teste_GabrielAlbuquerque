@@ -6,6 +6,6 @@ namespace BillingService.Service;
 public interface IInvoiceService
 {
     Task<IEnumerable<InvoiceResponseDto>> GetInvoicesAsync();
-    Task PrintInvoiceAsync(int invoiceId);
+    Task PrintInvoiceAsync(int sequentialNumber);
     Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceRequestDto request);
 }

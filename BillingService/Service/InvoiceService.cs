@@ -47,14 +47,14 @@ public class InvoiceService(BillingDbContext context, IInventoryClient inventory
         return invoiceMapper.MapToDto(invoice);
     }
     
-    public async Task PrintInvoiceAsync(int invoiceId)
+    public async Task PrintInvoiceAsync(int sequentialNumber)
     {
         var invoice = await context.Invoices
             .Include(i => i.Items) 
-            .FirstOrDefaultAsync(i => i.Id == invoiceId);
+            .FirstOrDefaultAsync(i => i.SequentialNumber == sequentialNumber);
 
         if (invoice is null)
-            throw new NotFoundException($"Nota Fiscal {invoiceId} não encontrada.");
+            throw new NotFoundException($"Nota Fiscal {sequentialNumber} não encontrada.");
 
         if (invoice.Status != InvoiceStatus.Aberta)
             throw new DomainException("Apenas notas com status 'Aberta' podem ser impressas.");

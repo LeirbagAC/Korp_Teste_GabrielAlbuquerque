@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BillingService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialBillingFix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,16 +19,16 @@ namespace BillingService.Migrations
                 name: "Invoices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SequentialNumber = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    SequentialNumber = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoices", x => x.Id);
+                    table.UniqueConstraint("AK_Invoices_SequentialNumber", x => x.SequentialNumber);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -38,11 +38,11 @@ namespace BillingService.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     ProductCode = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProductDescription = table.Column<string>(type: "longtext", nullable: false)
+                    ProductName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },

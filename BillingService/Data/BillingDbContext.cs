@@ -12,10 +12,26 @@ public class BillingDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Invoice>()
-            .Property(i => i.SequentialNumber)
-            .ValueGeneratedOnAdd(); 
+        modelBuilder.Entity<Invoice>(builder =>
+        {
+            builder.HasKey(i => i.Id);
             
+            builder.HasAlternateKey(i => i.SequentialNumber);
+
+            builder.Property(i => i.SequentialNumber)
+                .ValueGeneratedOnAdd();
+               
+            builder.HasMany(i => i.Items)
+                .WithOne(item => item.Invoice)
+                .HasForeignKey(item => item.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<InvoiceItem>(builder =>
+        {
+            builder.HasKey(i => i.Id);
+        });
+
         base.OnModelCreating(modelBuilder);
     }
 }

@@ -23,10 +23,10 @@ public class InvoicesController(IInvoiceService invoiceService) : ControllerBase
         return StatusCode(StatusCodes.Status201Created, createdInvoice); 
     } 
     
-    [HttpPost("{id}/print")]
-    public async Task<IActionResult> PrintInvoice(int id)
+    [HttpPost("{sequentialNumber}/print")]
+    public async Task<IActionResult> PrintInvoice(int sequentialNumber)
     {
-        await invoiceService.PrintInvoiceAsync(id);
+        await invoiceService.PrintInvoiceAsync(sequentialNumber);
         return NoContent(); 
     }
 }
