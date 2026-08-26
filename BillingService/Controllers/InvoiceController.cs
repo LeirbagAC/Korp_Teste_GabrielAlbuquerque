@@ -9,6 +9,13 @@ namespace BillingService.Controllers;
 [Route("api/[controller]")]
 public class InvoicesController(IInvoiceService invoiceService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<InvoiceResponseDto>>> GetInvoicesAsync()
+    {
+        var invoices = await invoiceService.GetInvoicesAsync();
+        return Ok(invoices); 
+    }
+    
     [HttpPost]
     public async Task<ActionResult<InvoiceResponseDto>> CreateInvoiceAsync(CreateInvoiceRequestDto request)
     {
