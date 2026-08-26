@@ -1,21 +1,49 @@
-# Build
-bin/
-obj/
+# ===================================
+# .NET / C# (Backend)
+# ===================================
+**/bin/
+**/obj/
+**/TestResults/
 
-# Rider
-.idea/
+# ===================================
+# Node / Angular (Frontend)
+# ===================================
+**/node_modules/
+**/.angular/
+**/dist/
+**/tmp/
+**/out-tsc/
+**/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Logs
+# ===================================
+# IDEs e Editores
+# ===================================
+**/.idea/
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.history/
+
+# ===================================
+# Logs & Variáveis de Ambiente
+# ===================================
 *.log
-logs/
-
-# User Secrets
-secrets.json
-
-# Environment variables
+**/logs/
 .env
 .env.*
+secrets.json
 
-# OS files
+# ===================================
+# Sistema Operacional
+# ===================================
 .DS_Store
-Thumbs.dbea/
+Thumbs.db
