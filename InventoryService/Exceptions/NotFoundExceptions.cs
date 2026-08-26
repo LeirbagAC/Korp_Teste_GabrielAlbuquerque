@@ -1,6 +1,6 @@
 namespace InventoryService.Exceptions;
 
-public class NotFoundException : Exception
+public class NotFoundException : AppException
 {
-    public NotFoundException(string message) : base(message) { }
+    public NotFoundException(string message) : base(message, StatusCodes.Status404NotFound) { }
 }

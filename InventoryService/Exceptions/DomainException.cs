@@ -1,6 +1,6 @@
 namespace InventoryService.Exceptions;
 
-public class DomainException : Exception
+public class DomainException : AppException
 {
-    public DomainException(string message) : base(message) { }
+    public DomainException(string message) : base(message, StatusCodes.Status422UnprocessableEntity) { }
 }
