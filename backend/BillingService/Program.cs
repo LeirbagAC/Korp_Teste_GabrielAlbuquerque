@@ -65,7 +65,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-app.UseHttpsRedirection();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<BillingDbContext>();
+    dbContext.Database.Migrate(); 
+}
+
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

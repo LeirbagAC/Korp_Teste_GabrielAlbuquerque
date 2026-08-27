@@ -11,6 +11,11 @@ services:
       - "3306:3306"
     volumes:
       - mysql_inventory_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   mysql-billing:
     image: mysql:latest
@@ -24,6 +29,53 @@ services:
       - "3307:3306" # Acessível em localhost:3307
     volumes:
       - mysql_billing_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ---------------- Microsserviços ----------------
+  inventory-service:
+    build:
+      context: ./backend/InventoryService
+    container_name: inventory_api
+    restart: always 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # O Server aponta para o nome do contêiner. A porta interna do MySQL é sempre 3306.
+      - ConnectionStrings__InventoryConnection=Server=mysql-inventory;Port=3306;Database=inventory_db;Uid=Gabriel;Pwd=123456;
+    depends_on:
+      mysql-inventory:
+        condition: service_healthy
+    ports:
+      - "5225:8080" # Mantém a porta 5225 exposta caso você queira testar a API isolada
+
+  billing-service:
+    build:
+      context: ./backend/BillingService
+    container_name: billing_api
+    restart: always 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__InvoiceConnection=Server=mysql-billing;Port=3306;Database=invoice_db;Uid=Gabriel;Pwd=123456;
+      - Services__InventoryUrl=http://inventory-service:8080
+    depends_on:
+      mysql-billing:
+        condition: service_healthy
+    ports:
+      - "5132:8080" # Mantém a porta 5132 exposta para testes isolados
+
+  # ---------------- Frontend ----------------
+  frontend:
+    build:
+      context: ./frontend
+    container_name: korp_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - inventory-service
+      - billing-service
 
 volumes:
   mysql_inventory_data:
