@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -41,7 +41,8 @@ export class NotasFiscaisComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private notaFiscalService: NotaFiscalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
   ) {
     this.notaForm = this.fb.group({
       items: this.fb.array([])
@@ -50,7 +51,7 @@ export class NotasFiscaisComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarNotas();
+    this.loadInvoices();
   }
 
   get itemsFormArray(): FormArray {
@@ -71,17 +72,19 @@ export class NotasFiscaisComponent implements OnInit {
     }
   }
 
-  carregarNotas(): void {
+  loadInvoices(): void {
     this.isLoadingTable = true;
     this.notaFiscalService.getInvoices().subscribe({
       next: (data) => {
         this.notas = data;
         this.isLoadingTable = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.message.error('Erro ao carregar as notas fiscais.');
         this.isLoadingTable = false;
+        this.cdr.detectChanges();
       }
     });
   }

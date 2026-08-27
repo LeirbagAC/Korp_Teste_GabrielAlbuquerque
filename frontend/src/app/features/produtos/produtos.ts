@@ -1,4 +1,3 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -11,6 +10,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ProdutoService, ProductRequest } from './produto.service';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 
 interface ProdutoTabela {
   codigo: string;
@@ -39,6 +41,7 @@ interface ProdutoTabela {
 export class ProdutosComponent implements OnInit {
   produtos: ProdutoTabela[] = [];
   isLoadingTable = false;
+  private destroyRef = inject(DestroyRef);
 
   isVisible = false;
   isOkLoading = false;
@@ -48,7 +51,7 @@ export class ProdutosComponent implements OnInit {
     private fb: FormBuilder,
     private produtoService: ProdutoService,
     private message: NzMessageService,
-    private cdr: ChangeDetectorRef // Injetando o detector de mudanças
+    private cdr: ChangeDetectorRef
   ) {
     this.produtoForm = this.fb.group({
       productName: [null, [Validators.required]],
@@ -57,31 +60,35 @@ export class ProdutosComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarProdutos();
+    this.loadProducts();
   }
 
-  carregarProdutos(): void {
+  loadProducts(): void {
     this.isLoadingTable = true;
-    this.cdr.detectChanges(); 
-
-    this.produtoService.getProducts().subscribe({
-      next: (data) => {
-        this.produtos = data.map(item => ({
-          codigo: item.code,
-          descricao: item.productName,
-          saldo: item.quantity
-        }));
-        
-        this.isLoadingTable = false;
-        this.cdr.detectChanges(); 
-      },
-      error: (err) => {
-        console.error(err);
-        this.message.error('Erro ao carregar a lista de produtos.');
-        this.isLoadingTable = false;
-        this.cdr.detectChanges();
-      }
-    });
+    
+    this.produtoService.getProducts()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.isLoadingTable = false;
+          this.cdr.detectChanges(); //Para garantir que a tabela seja carregada
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.produtos = data.map(item => ({
+            codigo: item.code,
+            descricao: item.productName,
+            saldo: item.quantity
+          }));
+          
+          this.cdr.detectChanges(); 
+        },
+        error: (err) => {
+          console.error('Falha na requisição:', err);
+          this.message.error('Erro ao carregar a lista de produtos.');
+        }
+      });
   }
 
   showModal(): void {
