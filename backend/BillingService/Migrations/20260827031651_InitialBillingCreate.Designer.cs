@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BillingService.Migrations
 {
     [DbContext(typeof(BillingDbContext))]
-    [Migration("20260826121252_InitialBillingFix")]
-    partial class InitialBillingFix
+    [Migration("20260827031651_InitialBillingCreate")]
+    partial class InitialBillingCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,9 +64,6 @@ namespace BillingService.Migrations
                     b.Property<string>("ProductCode")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
