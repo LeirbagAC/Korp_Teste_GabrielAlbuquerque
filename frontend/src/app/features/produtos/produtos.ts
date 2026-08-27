@@ -46,7 +46,6 @@ export class ProdutosComponent implements OnInit {
   produtos: ProdutoTabela[] = [];
   isLoadingTable = false;
   private destroyRef = inject(DestroyRef);
-
   isVisible = false;
   isOkLoading = false;
   produtoForm: FormGroup;
@@ -75,7 +74,7 @@ export class ProdutosComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
           this.isLoadingTable = false;
-          this.cdr.detectChanges(); //Para garantir que a tabela seja carregada
+          this.cdr.detectChanges(); 
         })
       )
       .subscribe({
@@ -90,7 +89,8 @@ export class ProdutosComponent implements OnInit {
         },
         error: (err) => {
           console.error('Falha na requisição:', err);
-          this.message.error('Erro ao carregar a lista de produtos.');
+          const msg = err.error?.detail || err.error?.title || err.error?.message || 'Erro ao carregar a lista de produtos (Serviço indisponível).';
+          this.message.error(msg);
         }
       });
   }
@@ -119,7 +119,6 @@ export class ProdutosComponent implements OnInit {
               saldo: response.quantity 
             }
           ];
-
           this.message.success('Produto cadastrado com sucesso!');
           this.isOkLoading = false;
           this.isVisible = false;
@@ -127,7 +126,8 @@ export class ProdutosComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.message.error('Erro ao cadastrar o produto na API.');
+          const msg = err.error?.detail || err.error?.title || err.error?.message || (typeof err.error === 'string' ? err.error : 'Erro ao emitir a nota fiscal.');
+          this.message.error(msg);
           this.isOkLoading = false;
         }
       });

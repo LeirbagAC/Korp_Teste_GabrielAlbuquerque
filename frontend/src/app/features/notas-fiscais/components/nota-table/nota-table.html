@@ -1,31 +1,34 @@
 <nz-table #tabelaNotas [nzData]="notas" [nzShowPagination]="true" [nzPageSize]="10" [nzLoading]="isLoading" nzSize="middle" [nzScroll]="{ x: '600px' }">
-      <thead>
-        <tr>
-          <th>NÚMERO</th>
-          <th>QTD ITENS</th>
-          <th>STATUS</th>
-          <th nzAlign="center">AÇÕES</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (nota of tabelaNotas.data; track nota.sequentialNumber) {
-          <tr>
-            <td style="color: #3b82f6; font-weight: 600;">#{{ nota.sequentialNumber }}</td>
-            <td>{{ nota.items.length }} item(ns)</td>
-              <td>
-                <nz-tag [ngClass]="nota.status === 'Aberta' ? 'tag-aberta' : 'tag-fechada'">
-                  {{ nota.status }}
-                </nz-tag>
-              </td>
-            <td nzAlign="center">
-              <button nz-button nzType="text" nz-tooltip nzTooltipTitle="Visualizar" (click)="visualizar.emit(nota.sequentialNumber)">
-                <span nz-icon nzType="eye"></span>
-              </button>
-              <button nz-button nzType="text" nz-tooltip nzTooltipTitle="Imprimir" (click)="imprimir.emit(nota.sequentialNumber)">
-                <span nz-icon nzType="printer"></span>
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </nz-table>
+  <thead>
+    <tr>
+      <th>NÚMERO</th>
+      <th>QTD ITENS</th>
+      <th>STATUS</th>
+      <th nzAlign="center">AÇÕES</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (nota of tabelaNotas.data; track nota.sequentialNumber) {
+      <tr>
+        <td style="color: #3b82f6; font-weight: 600;">#{{ nota.sequentialNumber }}</td>
+        <td>{{ nota.items.length }} item(ns)</td>
+        <td>
+          <nz-tag [ngClass]="nota.status === 'Aberta' ? 'tag-aberta' : 'tag-fechada'">
+            {{ nota.status }}
+          </nz-tag>
+        </td>
+        <td nzAlign="center">
+          <button nz-button nzType="text" nz-tooltip nzTooltipTitle="Visualizar" (click)="visualizar.emit(nota.sequentialNumber)">
+            <span nz-icon nzType="eye"></span>
+          </button>
+          
+          <button nz-button nzType="text" nz-tooltip nzTooltipTitle="Imprimir" 
+                  [disabled]="nota.status !== 'Aberta'" 
+                  (click)="imprimir.emit(nota.sequentialNumber)">
+            <span nz-icon nzType="printer"></span>
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

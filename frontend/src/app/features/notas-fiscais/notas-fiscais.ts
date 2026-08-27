@@ -13,6 +13,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+
 import { NotaFiscalService, InvoiceResponse, InvoiceCreateRequest } from './nota-fiscal.service';
 import { InvoiceTableComponent } from './components/nota-table/nota-table';
 import { NotaDrawerComponent } from './components/nota-drawer/nota-drawer';
@@ -45,11 +46,9 @@ import { NotaModalComponent } from './components/nota-modal/nota-modal';
 export class NotasFiscaisComponent implements OnInit {
   notas: InvoiceResponse[] = [];
   isLoadingTable = false;
-
   isVisible = false;
   isOkLoading = false;
   notaForm: FormGroup;
-
   drawerVisible = false;
   noteDetails: InvoiceResponse | null = null;
 
@@ -62,7 +61,7 @@ export class NotasFiscaisComponent implements OnInit {
     this.notaForm = this.fb.group({
       items: this.fb.array([])
     });
-    this.addItem(); 
+    this.addItem();
   }
 
   ngOnInit(): void {
@@ -97,7 +96,8 @@ export class NotasFiscaisComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.message.error('Erro ao carregar as notas fiscais.');
+        const msg = err.error?.detail || err.error?.title || err.error?.message || 'Erro ao carregar as notas fiscais (Serviço indisponível).';
+        this.message.error(msg);
         this.isLoadingTable = false;
         this.cdr.detectChanges();
       }
@@ -128,7 +128,8 @@ export class NotasFiscaisComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.message.error('Erro ao emitir a nota fiscal.');
+          const msg = err.error?.detail || err.error?.title || err.error?.message || typeof err.error === 'string' ? err.error : 'Erro ao emitir a nota fiscal.';
+          this.message.error(msg);
           this.isOkLoading = false;
         }
       });
@@ -150,12 +151,11 @@ export class NotasFiscaisComponent implements OnInit {
 
   printNote(numero: string): void {
     const idMensagem = this.message.loading(`Enviando nota #${numero} para impressão...`, { nzDuration: 0 }).messageId;
-
     this.notaFiscalService.printInvoice(numero).subscribe({
       next: () => {
         this.message.remove(idMensagem);
         this.message.success(`Nota #${numero} impressa com sucesso!`);
-
+        
         const notaIndex = this.notas.findIndex(n => n.sequentialNumber === numero);
         if (notaIndex !== -1) {
           this.notas[notaIndex].status = 'Fechada';
@@ -166,7 +166,9 @@ export class NotasFiscaisComponent implements OnInit {
       error: (err) => {
         console.error('Erro na impressão:', err);
         this.message.remove(idMensagem);
-        this.message.error(`Falha ao tentar imprimir a nota #${numero}.`);
+        
+        const msg = err.error?.detail || err.error?.title || err.error?.message || (typeof err.error === 'string' ? err.error : `Falha ao tentar imprimir a nota #${numero}.`);
+        this.message.error(msg);
       }
     });
   }
@@ -183,5 +185,4 @@ export class NotasFiscaisComponent implements OnInit {
     this.drawerVisible = false;
     setTimeout(() => this.noteDetails = null, 300);
   }
-
 }
