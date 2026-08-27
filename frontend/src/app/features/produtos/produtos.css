@@ -53,37 +53,3 @@
   font-size: 14px;
   font-weight: 600;
 }
-
-/* Estilização das Colunas */
-.col-codigo {
-  color: #71717a;
-  font-weight: 500;
-}
-.col-descricao {
-  font-weight: 600;
-  color: #3f3f46;
-}
-
-/* Badges e Tags */
-.badge-stock {
-  display: inline-block;
-  min-width: 32px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
-}
-.badge-blue { background-color: #3b82f6; }
-.badge-red { background-color: #fca5a5; }
-
-.tag-low-stock {
-  background-color: #fee2e2;
-  color: #ef4444;
-  border: none;
-  margin-left: 12px;
-  border-radius: 4px;
-  font-weight: 700;
-  padding: 2px 8px;
-  font-size: 10px;
-}

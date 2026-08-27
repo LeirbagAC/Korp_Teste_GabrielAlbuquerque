@@ -1,0 +1,25 @@
+<nz-modal
+  [nzVisible]="isVisible"
+  nzTitle="Cadastrar Novo Produto"
+  (nzOnCancel)="cancel.emit()"
+  (nzOnOk)="ok.emit()"
+  [nzOkLoading]="isOkLoading"
+  nzOkText="Salvar Produto"
+  nzCancelText="Cancelar">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="produtoForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="productName">Descrição do Produto</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor, insira o nome do produto.">
+          <input nz-input formControlName="productName" id="productName" placeholder="Ex: Monitor UltraWide 34&quot;" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="quantity">Quantidade Inicial em Estoque</nz-form-label>
+        <nz-form-control nzErrorTip="A quantidade deve ser maior ou igual a zero.">
+          <nz-input-number formControlName="quantity" id="quantity" [nzMin]="0" [nzStep]="1" style="width: 100%;"></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

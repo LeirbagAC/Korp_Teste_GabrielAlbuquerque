@@ -1,0 +1,27 @@
+<nz-table #tabelaProdutos [nzData]="produtos" [nzShowPagination]="true" [nzPageSize]="10" [nzLoading]="isLoading" nzSize="middle">
+  <thead>
+    <tr>
+      <th nzWidth="15%">CÓDIGO</th>
+      <th>DESCRIÇÃO</th>
+      <th nzAlign="center" nzWidth="20%">SALDO EM ESTOQUE</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (item of tabelaProdutos.data; track item.codigo) {
+      <tr>
+        <td class="col-codigo">{{ item.codigo }}</td>
+        <td class="col-descricao">
+          {{ item.descricao }}
+          @if (item.saldo <= 3) {
+            <nz-tag class="tag-low-stock">BAIXO ESTOQUE</nz-tag>
+          }
+        </td>
+        <td nzAlign="center">
+          <span class="badge-stock" [ngClass]="item.saldo > 3 ? 'badge-blue' : 'badge-red'">
+            {{ item.saldo }}
+          </span>
+        </td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

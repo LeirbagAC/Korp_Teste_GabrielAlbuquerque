@@ -13,6 +13,8 @@ import { ProdutoService, ProductRequest } from './produto.service';
 import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
+import { ProdutoTableComponent } from './components/produto-table/produto-table';
+import { ProdutoModalComponent } from './components/produto-modal/produto-modal';
 
 interface ProdutoTabela {
   codigo: string;
@@ -33,7 +35,9 @@ interface ProdutoTabela {
     NzModalModule,
     NzFormModule,
     NzInputModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    ProdutoTableComponent,
+    ProdutoModalComponent
   ],
   templateUrl: './produtos.html',
   styleUrl: './produtos.css'
