@@ -1,0 +1,127 @@
+<div class="page-header">
+  <div>
+    <h2>Notas Fiscais</h2>
+    <p>Gerencie e emita faturas para seus clientes.</p>
+  </div>
+  <button nz-button nzType="primary" nzSize="large" class="btn-novo" (click)="showModal()">
+    <span nz-icon nzType="plus"></span> Nova Nota Fiscal
+  </button>
+</div>
+
+<div class="table-container">
+  <div class="table-toolbar">
+    <div class="toolbar-actions">
+      <button nz-button class="btn-tool">Status <span nz-icon nzType="down"></span></button>
+      <button nz-button class="btn-tool">Data <span nz-icon nzType="calendar"></span></button>
+    </div>
+    <span class="total-items">Mostrando {{ tabelaNotas.data.length }} de {{ notas.length }} notas</span>
+  </div>
+
+  <nz-table
+    #tabelaNotas
+    [nzData]="notas"
+    [nzShowPagination]="true"
+    [nzPageSize]="10"
+    [nzLoading]="isLoadingTable"
+    nzSize="middle"
+  >
+    <thead>
+      <tr>
+        <th nzWidth="15%">NÚMERO</th>
+        <th>QTD ITENS</th>
+        <th nzWidth="20%">DATA</th>
+        <th nzAlign="center" nzWidth="15%">STATUS</th>
+        <th nzAlign="center" nzWidth="15%">AÇÕES</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (nota of tabelaNotas.data; track nota.sequentialNumber) {
+        <tr>
+          <td class="col-numero">#{{ nota.sequentialNumber }}</td>
+          <td class="col-default">{{ nota.items.length }} item(ns)</td>
+          <td class="col-default">{{ nota.createdAt | date:'dd MMM yyyy' }}</td>
+          <td nzAlign="center">
+            @if (nota.status === 'Aberta') {
+              <nz-tag class="tag-aberta">Aberta</nz-tag>
+            } @else {
+              <nz-tag class="tag-fechada">Fechada</nz-tag>
+            }
+          </td>
+          <td nzAlign="center">
+            <div class="action-buttons">
+              <button nz-button nzType="text" (click)="visualizarNota(nota.sequentialNumber)">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </button>
+              <button nz-button nzType="text" (click)="imprimirNota(nota.sequentialNumber)">
+                <span nz-icon nzType="printer" nzTheme="outline"></span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>
+
+<!-- Modal Dinâmico de Emissão de Nota Fiscal -->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Emitir Nova Nota Fiscal"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isOkLoading"
+  nzOkText="Emitir Nota"
+  nzCancelText="Cancelar"
+  nzWidth="600px"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="notaForm" nzLayout="vertical">
+      
+      <!-- Array Dinâmico de Itens -->
+      <div formArrayName="items">
+        @for (item of itemsFormArray.controls; track $index) {
+          <div [formGroupName]="$index" class="form-row">
+            
+            <nz-form-item style="flex: 2;">
+              <nz-form-label [nzRequired]="true" *ngIf="$index === 0">Código do Produto</nz-form-label>
+              <nz-form-control nzErrorTip="Código obrigatório">
+                <input nz-input formControlName="productCode" placeholder="Ex: PROD-001" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item style="flex: 1;">
+              <nz-form-label [nzRequired]="true" *ngIf="$index === 0">Quantidade</nz-form-label>
+              <nz-form-control nzErrorTip="Qtd. inválida">
+                <nz-input-number 
+                  formControlName="quantity" 
+                  [nzMin]="1" 
+                  [nzStep]="1" 
+                  style="width: 100%;">
+                </nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+
+            <!-- Botão de Excluir Linha -->
+            <button 
+              nz-button 
+              nzType="text" 
+              nzDanger 
+              (click)="removeItem($index)" 
+              [disabled]="itemsFormArray.length === 1" 
+              class="btn-delete-row"
+              [style.marginTop.px]="$index === 0 ? 30 : 0">
+              <span nz-icon nzType="delete"></span>
+            </button>
+            
+          </div>
+        }
+      </div>
+
+      <!-- Adicionar mais um item à nota -->
+      <button nz-button nzType="dashed" style="width: 100%; margin-top: 8px;" (click)="addItem()">
+        <span nz-icon nzType="plus"></span> Adicionar Item
+      </button>
+
+    </form>
+  </ng-container>
+</nz-modal>

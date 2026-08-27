@@ -1,0 +1,110 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-top: 8px;
+}
+.page-header h2 {
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 4px;
+  color: #18181b;
+}
+.page-header p {
+  color: #71717a;
+  margin: 0;
+  font-size: 14px;
+}
+.btn-novo {
+  border-radius: 8px;
+  background-color: #3b82f6;
+  border: none;
+  font-weight: 500;
+}
+
+.table-container {
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e4e4e7;
+}
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+.btn-tool {
+  border-radius: 16px;
+  color: #52525b;
+  font-weight: 500;
+  border-color: #e4e4e7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.total-items {
+  color: #52525b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.col-numero {
+  color: #3b82f6;
+  font-weight: 600;
+}
+.col-default {
+  font-weight: 600;
+  color: #3f3f46;
+}
+
+.tag-aberta {
+  background-color: #f3f4f6;
+  color: #52525b;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+}
+.tag-fechada {
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.action-buttons button {
+  color: #52525b;
+}
+.action-buttons button:hover {
+  color: #3b82f6;
+}
+
+/* Container de cada linha de produto no Modal */
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+/* Ajuste sutil para o botão de deletar alinhar com os inputs */
+.btn-delete-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}

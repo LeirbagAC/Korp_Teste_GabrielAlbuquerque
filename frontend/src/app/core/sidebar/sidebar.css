@@ -1,0 +1,11 @@
+.menu-item-custom {
+  border-radius: 8px !important;
+  margin: 8px 16px 0 !important;
+  width: calc(100% - 32px) !important;
+  font-weight: 500 !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}

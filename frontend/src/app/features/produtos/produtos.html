@@ -1,0 +1,92 @@
+<div class="page-header">
+  <div>
+    <h2>Controle de Produtos</h2>
+    <p>Gerencie seu inventário e cadastro de itens.</p>
+  </div>
+  <button nz-button nzType="primary" nzSize="large" class="btn-novo" (click)="showModal()">
+    <span nz-icon nzType="plus"></span> Novo Produto
+  </button>
+</div>
+
+<div class="table-container">
+  
+  <div class="table-toolbar">
+    <span class="total-items">Mostrando {{ tabelaProdutos.data.length }} de {{ produtos.length }} itens</span>
+  </div>
+
+  <!-- Tabela -->
+  <nz-table
+    #tabelaProdutos
+    [nzData]="produtos"
+    [nzShowPagination]="true"
+    [nzPageSize]="10"
+    [nzLoading]="isLoadingTable"
+    nzSize="middle"
+  >
+    <thead>
+      <tr>
+        <th nzWidth="15%">CÓDIGO</th>
+        <th>DESCRIÇÃO</th>
+        <th nzAlign="center" nzWidth="20%">SALDO EM ESTOQUE</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of tabelaProdutos.data; track item.codigo) {
+        <tr>
+          <td class="col-codigo">{{ item.codigo }}</td>
+          <td class="col-descricao">
+            {{ item.descricao }}
+            @if (item.saldo <= 3) {
+              <nz-tag class="tag-low-stock">BAIXO ESTOQUE</nz-tag>
+            }
+          </td>
+          <td nzAlign="center">
+            <span class="badge-stock" [ngClass]="item.saldo > 3 ? 'badge-blue' : 'badge-red'">
+              {{ item.saldo }}
+            </span>
+          </td>
+          <td nzAlign="center">
+            <!-- Ações -->
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</div>
+
+<!-- Modal de Cadastro -->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Cadastrar Novo Produto"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isOkLoading"
+  nzOkText="Salvar Produto"
+  nzCancelText="Cancelar"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="produtoForm" nzLayout="vertical">
+      
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="productName">Descrição do Produto</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor, insira o nome do produto.">
+          <input nz-input formControlName="productName" id="productName" placeholder="Ex: Monitor UltraWide 34&quot;" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="quantity">Quantidade Inicial em Estoque</nz-form-label>
+        <nz-form-control nzErrorTip="A quantidade deve ser maior ou igual a zero.">
+          <nz-input-number 
+            formControlName="quantity" 
+            id="quantity" 
+            [nzMin]="0" 
+            [nzStep]="1" 
+            style="width: 100%;">
+          </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-container>
+</nz-modal>

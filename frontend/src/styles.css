@@ -1,1 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f4f4f5;
+}
+
+/* Customização para a tabela Ant Design combinar com o print */
+.ant-table-thead > tr > th {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+.ant-table-pagination.ant-pagination {
+  margin: 16px 24px !important;
+}
+
+/* Remove o fundo cinza padrão do cabeçalho da tabela do Ant Design */
+.ant-table-thead > tr > th {
+  background-color: #ffffff !important;
+  color: #52525b !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+/* Linhas mais sutis na tabela */
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+
+/* Ajusta as margens da paginação para ficarem alinhadas dentro do card */
+.ant-table-pagination.ant-pagination {
+  margin: 16px 24px !important;
+}

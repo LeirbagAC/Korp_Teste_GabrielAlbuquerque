@@ -1,0 +1,15 @@
+<nz-layout style="min-height: 100vh;">
+  <nz-sider nzWidth="260px" style="background: #27272a;">
+    <app-sidebar></app-sidebar>
+  </nz-sider>
+  <nz-layout style="background: #ffffff;">
+    <nz-header style="background: #ffffff; padding: 0 32px; height: 80px; display: flex; align-items: center; border-bottom: 1px solid transparent;">
+      <div style="flex: 1; height: 100%;">
+        <app-topbar></app-topbar>
+      </div>
+    </nz-header>
+    <nz-content style="padding: 0 32px 32px 32px; background: #ffffff;">
+      <router-outlet></router-outlet>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
