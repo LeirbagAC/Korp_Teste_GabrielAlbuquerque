@@ -10,7 +10,13 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NotaFiscalService, InvoiceResponse, InvoiceCreateRequest } from './nota-fiscal.service';
+import { InvoiceTableComponent } from './components/nota-table/nota-table';
+import { NotaDrawerComponent } from './components/nota-drawer/nota-drawer';
+import { NotaModalComponent } from './components/nota-modal/nota-modal';
 
 @Component({
   selector: 'app-notas-fiscais',
@@ -25,7 +31,13 @@ import { NotaFiscalService, InvoiceResponse, InvoiceCreateRequest } from './nota
     NzModalModule,
     NzFormModule,
     NzInputModule,
-    NzInputNumberModule
+    NzDrawerModule,
+    NzDescriptionsModule,
+    NzTooltipModule,
+    NzInputNumberModule,
+    InvoiceTableComponent,
+    NotaDrawerComponent,
+    NotaModalComponent
   ],
   templateUrl: './notas-fiscais.html',
   styleUrl: './notas-fiscais.css'
@@ -37,6 +49,9 @@ export class NotasFiscaisComponent implements OnInit {
   isVisible = false;
   isOkLoading = false;
   notaForm: FormGroup;
+
+  drawerVisible = false;
+  noteDetails: InvoiceResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -133,11 +148,40 @@ export class NotasFiscaisComponent implements OnInit {
     this.addItem(); 
   }
 
-  imprimirNota(numero: string): void {
-    this.message.success(`Nota #${numero} enviada para impressão!`);
+  printNote(numero: string): void {
+    const idMensagem = this.message.loading(`Enviando nota #${numero} para impressão...`, { nzDuration: 0 }).messageId;
+
+    this.notaFiscalService.printInvoice(numero).subscribe({
+      next: () => {
+        this.message.remove(idMensagem);
+        this.message.success(`Nota #${numero} impressa com sucesso!`);
+
+        const notaIndex = this.notas.findIndex(n => n.sequentialNumber === numero);
+        if (notaIndex !== -1) {
+          this.notas[notaIndex].status = 'Fechada';
+          this.notas = [...this.notas];
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Erro na impressão:', err);
+        this.message.remove(idMensagem);
+        this.message.error(`Falha ao tentar imprimir a nota #${numero}.`);
+      }
+    });
   }
 
-  visualizarNota(numero: string): void {
-    this.message.info(`Visualizando detalhes da nota #${numero}`);
+  viewNote(numero: string): void {
+    const note = this.notas.find(n => n.sequentialNumber === numero);
+    if (note) {
+      this.noteDetails = note;
+      this.drawerVisible = true;
+    }
   }
+
+  closeDrawer(): void {
+    this.drawerVisible = false;
+    setTimeout(() => this.noteDetails = null, 300);
+  }
+
 }

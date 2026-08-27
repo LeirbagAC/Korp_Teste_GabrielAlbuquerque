@@ -34,4 +34,9 @@ export class NotaFiscalService {
   createInvoice(request: InvoiceCreateRequest): Observable<InvoiceResponse> {
     return this.http.post<InvoiceResponse>(this.apiUrl, request);
   }
+
+  printInvoice(sequentialNumber: string): Observable<void> {
+    const url = `${this.apiUrl}/${sequentialNumber}/print`;
+    return this.http.post<void>(url, {});
+  }
 }

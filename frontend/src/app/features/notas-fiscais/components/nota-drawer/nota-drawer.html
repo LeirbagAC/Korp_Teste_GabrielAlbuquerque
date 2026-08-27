@@ -1,0 +1,55 @@
+<nz-drawer
+  [nzVisible]="visible" 
+  nzPlacement="right"
+  nzTitle="Detalhes da Nota Fiscal"
+  [nzWidth]="500"
+  (nzOnClose)="onClose()"
+>
+  <ng-container *nzDrawerContent>
+    @if (nota) {             
+      
+      <!-- Cabeçalho com as informações principais -->
+      <nz-descriptions [nzColumn]="1" nzBordered style="margin-bottom: 32px;">
+        <nz-descriptions-item nzTitle="Número da Nota">
+          <span style="font-weight: 600; color: #3b82f6;">#{{ nota.sequentialNumber }}</span>
+        </nz-descriptions-item>
+                 
+        <nz-descriptions-item nzTitle="Data de Emissão">
+          {{ nota.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        </nz-descriptions-item>
+                 
+        <nz-descriptions-item nzTitle="Status">
+          @if (nota.status === 'Aberta') {
+            <nz-tag class="tag-aberta">Aberta</nz-tag>
+          } @else {
+            <nz-tag class="tag-fechada">Fechada</nz-tag>
+          }
+        </nz-descriptions-item>
+      </nz-descriptions>
+
+      <h4 style="margin-bottom: 16px; color: #3f3f46; font-weight: 600;">Itens da Nota ({{ nota.items.length }})</h4>
+             
+      <nz-table
+         #tabelaItens
+         [nzData]="nota.items"
+         [nzShowPagination]="false"
+         nzSize="small"
+         nzBordered>
+        <thead>
+          <tr>
+            <th style="background-color: #f4f4f5;">CÓDIGO DO PRODUTO</th>
+            <th nzAlign="center" style="background-color: #f4f4f5;">QUANTIDADE</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of tabelaItens.data; track item.productCode) {
+            <tr>
+              <td style="font-weight: 500; color: #52525b;">{{ item.productCode }}</td>
+              <td nzAlign="center">{{ item.quantity }}</td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>           
+    }
+  </ng-container>
+</nz-drawer>

@@ -1,0 +1,41 @@
+<nz-modal
+  [nzVisible]="isVisible"
+  nzTitle="Emitir Nova Nota Fiscal"
+  (nzOnCancel)="cancel.emit()"
+  (nzOnOk)="ok.emit()"
+  [nzOkLoading]="isOkLoading"
+  nzOkText="Emitir Nota"
+  nzCancelText="Cancelar"
+  nzWidth="600px"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="notaForm" nzLayout="vertical">
+      <div formArrayName="items">
+        @for (item of itemsFormArray.controls; track $index) {
+          <div [formGroupName]="$index" class="form-row" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
+            <nz-form-item style="flex: 2;">
+              <nz-form-label [nzRequired]="true" *ngIf="$index === 0">Código do Produto</nz-form-label>
+              <nz-form-control nzErrorTip="Código obrigatório">
+                <input nz-input formControlName="productCode" placeholder="Ex: PROD-0001" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item style="flex: 1;">
+              <nz-form-label [nzRequired]="true" *ngIf="$index === 0">Quantidade</nz-form-label>
+              <nz-form-control nzErrorTip="Qtd. inválida">
+                <nz-input-number formControlName="quantity" [nzMin]="1" [nzStep]="1" style="width: 100%;"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+
+            <button nz-button nzType="text" nzDanger (click)="remove.emit($index)" [disabled]="itemsFormArray.length === 1" class="btn-delete-row" [style.marginTop.px]="$index === 0 ? 30 : 0">
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        }
+      </div>
+      <button nz-button nzType="dashed" style="width: 100%; margin-top: 8px;" (click)="add.emit()">
+        <span nz-icon nzType="plus"></span> Adicionar Item
+      </button>
+    </form>
+  </ng-container>
+</nz-modal>
