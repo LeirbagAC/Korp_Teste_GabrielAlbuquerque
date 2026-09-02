@@ -5,7 +5,7 @@ Solução full-stack desenvolvida para o teste técnico da **Korp**, baseada em 
 | | |
 |---|---|
 | **Candidato** | Gabriel Albuquerque |
-| **Repositório** | `Korp_Teste_Gabriel` |
+| **Repositório** | `Korp_Teste_GabrielAlbuquerque` |
 
 ---
 
